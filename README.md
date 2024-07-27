@@ -1,51 +1,75 @@
-# Errors and warnings
+# Memory storage and calldata
 
 You can follow along with the video course from here.
 Introduction
-In the previous lesson, we learned how to combine arrays and structs to store information and how to manipulate this information with the function addPerson. This time we'll explore errors and warnings and how to leverage forums, search engines and AI resources.
-Errors and Warnings
-If we remove a semicolon from the code and then try to compile it, you'll encounter some 🚫 error messages. They will prevent the compiler from converting the code into a machine-readable form.
+In this section, we will explore how Solidity manages data storage, focusing on the differences between storage, memory, and calldata, and why these concepts are crucial for writing optimized and secure smart contracts.
+Data Locations
+Solidity can store data in six different locations. In this lesson, we will focus on the first three:
 
-![errors-1](assets/errors-1.png)
+- Calldata
+- Memory
+- Storage
+- Stack
+- Code
+- Logs
+- Calldata and Memory
+  In Solidity, calldata and memory are temporary storage locations for variables during function execution. calldata is read-only, used for function inputs that can't be modified. In contrast, memory allows for read-write access, letting variables be changed within the function. To modify calldata variables, they must first be loaded into memory.
 
-Restoring the semicolon to its correct position will prevent any errors, enabling us to proceed with deploying the code to the Remix VM. On the other hand, if we delete the SPDX license identifier from the top of our code and recompile, we will receive a yellow box showing a ⚠️ warning.
+  > 🚧 WARNING
+  > Most variable types default to memory automatically. However, for strings, you must specify either memory or calldata due to the way arrays are handled in memory.
+
+  ```solidity
+  string memory variableName = "someValue";
+  ```
+
+  Calldata
+  Calldata variables are read-only and cheaper than memory. They are mostly used for input parameters.
+  In the following example, if we try to replace the keyword memory with calldata, we receive an error because calldata variables can't be manipulated.
+
+  ```solidity
+  function addPerson(string calldata _name, uitn256 _favoriteNumber) public {
+    _name = "cat";
+    listOfPeople.push(Person(_favoriteNumber, _name));
+  }
+  ```
+
+  ![memory-1](assets/memory-storage-1.png)
+
+Storage
+Variables stored in storage are persistent on the blockchain, retaining their values between function calls and transactions.
+In our contract, the variable myFavoriteNumber is a storage variable. Variables which are declared outside any function are implicitly converted to storage variables.
 
 ```solidity
-> Warning: SPDX license identifier not provided in source file
+contract MyContract {
+    uint256 favoriteNumber; //this is a storage variable
+};
 ```
 
-![errors-2](assets/errors-2.png)
+Strings and primitive types
+If you try to specify the memory keyword for an `uint256` variable, you'll encounter this error:
 
-Unlike errors, warnings allow the code to be compiled and deployed but it's wise to take them seriously and aim to remove them entirely. They point out poor or risky practices in your code and sometimes indicate potential bugs.
+```solidity
+> Data location can only be specified for array, struct, or mapping type
+```
 
-- If it's red, there is a compilation error in the code and it needs to be solved before deployment.
-- If it's yellow, you might want to double-check and adjust your code.
+![memory-2](assets/memory-storage-2.png)
 
-Leverage your resources
-In situations when you do not understand the error that's prompted, using some online resources can make the situation clearer:
+In Solidity, a string is recognized as an array of bytes. On the other hand, primitive types, like uint256 have built-in mechanisms that dictate how and where they are stored, accessed and manipulated.
 
-- AI Frens (ChatGPT, Phind, Bard, AI Chrome extensions,..)
-- Github Discussions
-- Stack Exchange Ethereum
-- Peeranha
+> 🚧 WARNING
+> You can't use the storage keyword for variables inside a function. Only memory and calldata are allowed here, as the variable only exists temporarily.
 
-Phind
-Let's now attempt to resolve the semicolon error we intentionally created before by using [Phind](https://www.phind.com/search?home=true). Phind is an AI-powered search engine for developers. It operates by first conducting a Google search based on your query, and then parsing the results to give you a contextual response.
-We can input the compiler error under the drop-down menu, execute the search, and get a comprehensive explanation of why the error happened and how to fix it.
-
-![phind](assets/errors-3.png)
-
-Other resources
-It is advised to make active use of AI tools, as they can substantially boost your understanding and skills. Later in this course, we will explore how to ask effective questions, utilize AI prompts, structure your inquiries, and improve your search and learning techniques.
-You can also take part of online communities like GitHub discussions and Stack Exchange, where you'll find valuable insights, answers to your questions, and support from fellow developers.
-
-> 💡 TIP
-> One of the most important aspects of being an excellent software engineer or prompt engineer is not just having the information but knowing where to find it.
+```solidity
+function addPerson(string memory _name, uitn256 _favoriteNumber) public {  //cannot use storage as input parameters
+    uint256 test = 0; // variable here can be stored in memory or stack
+    listOfPeople.push(Person(_favoriteNumber, _name));
+}
+```
 
 Conclusion
-You’ve just learned how to effectively identifying and managing errors and warnings, enhancing your ability to maintain robust and reliable code. In the following lesson, we will delve deeper into Solidity’s data locations and some advanced Remix functionalities.
-
+Well done! You've learned the differences between the keywords storage, memory, and calldata in Solidity, enhancing your skills to develop robust Ethereum-based applications.
 🧑‍💻 Test yourself
 
-- 📕 What's the difference between a warning and an error? Make an example of each.
-- 🧑‍💻 Make a written list (or a bookmark in your browser) with at least 3 useful online resources will help you solve future bugs.
+- 📕 How does the Solidity compiler handle primitive types and strings in terms of memory management?
+- 📕 Why can't the storage keyword be used for variables inside a function?
+- 🧑‍💻 Write a smart contract that uses storage, memory and calldata keywords for its variables.

@@ -1,48 +1,60 @@
-# Mappings
+# Deploying your first contract
 
 You can follow along with the video course from here.
 Introduction
-We have just created a contract that stores multiple Person's' names and favorite numbers in a list. In this session, you will learn about mappings, their functionality, and when it is more advantageous to use them.
-Avoiding Costly Iterations
-If we want to know just one person's favorite number (e.g. Chelsea's) but our contract holds a (long) array of Person, we would need to iterate through the whole list to find the desired value:
+Over the past eight lessons, we crafted the SimpleStorage contract. It defines a custom type Person, includes an internal variable that can be read and updated, and contains a public array and mapping that can also be modified. In this lesson, we will deploy the contract to a real testnet, which fully simulates a live blockchain environment without using real Ether.
 
-```solidity
-list_of_people.add(Person("Pat", 7));
-list_of_people.add(Person("John", 8));
-list_of_people.add(Person("Mariah", 10));
-list_of_people.add(Person("Chelsea", 232));
+> 🔥 CAUTION
+> You could be tempted to immediately deploy this contract to a testnet. As a general rule, I caution against this. Make sure to write tests, carry out audits and ensure the robustness of your contract before deploying it to production. However, for the sake of this demonstration, we're going to deploy this as a dummy contract on a testnet.
 
-/* go through all the people to check their favorite number.
-If name is "Chelsea" -> return 232
-*/
-```
+Before deploying, be always sure to make a compilation check. This ensures that the contract has no errors or warnings and is fit for deployment.
+Deployment on a testnet
+We can start the deployment process by going into the deployment tab and switching from the local virtual environment (Remix VM) to the Injected Provider - MetaMask. This action will allow Remix to send requests and interact with your MetaMask account.
 
-Iterating through a long list of data is usually expensive and time-consuming, especially when we do not need to access elements by their index.
+![deploy-1](assets/deploy-1.png)
 
-Mapping
-To directly access the desired value without the need to iterate through the whole array, we can use mappings. They are sets of 🔑 (unique) keys linked to a 🍱 value and they are similar to hash tables or dictionaries in other programming languages. In our case, looking up a name (key) will return its correspondent favorite number (value).
-A mapping is defined using the mapping keyword, followed by the key type, the value type, the visibility, and the mapping name. In our example, we can construct an object that maps every name to its favorite number.
+You will be then prompted to select an account from your MetaMask wallet. Once you've connected that account to Remix, you should see a confirmation that the account is properly linked and that you are using the Sepolia testnet.
 
-```solidity
-mapping (string => uint256) public nameToFavoriteNumber;
-```
+![deploy-2](assets/deploy-2.png)
 
-Previously, we created an addPerson function that was adding a struct Person to an array list_of_people. Let's modify this function and add the struct Person to a mapping instead of an array:
+Ensure you have enough Sepolia ETH in your account, which you can obtain from a faucet. Once your balance is sufficient, you can proceed by clicking the "Deploy" button.
+After that, MetaMask will ask to sign and send the transaction on the testnet.
 
-```solidity
-nameToFavoriteNumber[_name] = _favoriteNumber;
-```
+![deploy-3](assets/deploy-3.png)
+
+Once the transaction is executed, the contract address will be listed under deployed contracts, along with the transaction details. This is how the deployment transaction is displayed on Etherscan.
+
+![deploy-4](assets/deploy-4.png)
+
+Contract interaction
+Since the contract has been deployed, we can now interact with it and update the blockchain. For example, if you want to store a number, you can do so by clicking the button 'store': MetaMask will ask for another transaction confirmation, that will update the favorite number. We can check the details on etherscan at the deployed address:
+
+![deploy-5](assets/deploy-5.png)
 
 > 👀❗IMPORTANT
-> Mappings have a constant time complexity for lookups, meaning that retrieving a value by its key is done in constant time,
+> View and pure functions will not send transactions
 
-> 🗒️ NOTE
-> The default value for all key types is zero. In our case, nameToFavoriteNumber["ET"] will be equal to 0.
+> 💡 TIP
+> Celebrate small victories and milestones. These psychological boosts will keep you engaged in the learning process.
 
+It's possible to deploy a contract to different testnets or a real mainnet, just by switching the Metamask network. Be sure to have enough net-compatible ETHs to deploy your contract.
 Conclusion
-Mapping can be a versatile tool to increase efficiency when attempting to find elements within a larger set of data.
+Deploying a Solidity contract to a testnet is a crucial step in the development process, allowing you to test its functionality in a live blockchain environment without the risk of using real Ether. Always remember to perform necessary audits and tests to confirm the contract's safety and correctness before deployment.
 
 🧑‍💻 Test yourself
 
-- 📕 In which cases is better to use an array instead of a mapping?
-- 🧑‍💻 Create a Solidity contract with a mapping named addressToBalance. Implement functions to add and retrieve data from this mapping.
+- 📕 What steps should you take before deploying a contract to a testnet?
+- 🧑‍💻 Deploy one simple Solidity contract to the Sepolia testnet. Which important information can you see on etherscan?
+
+## Zksync Deploying
+
+Introduction
+With the rising costs of deploying to the Ethereum mainnet, scaling solutions like roll-ups and Layer 2 networks are increasingly in demand. The following lessons will guide you through deploying a smart contract to L2 zkSync. If you've followed the zkSync lessons on the Blockchain Basics section, you should have already added ZK-Sync to your Metamask. If not, we'll walk through that process in the next lesson.
+Testnet Funds
+To deploy contracts on zkSync, you'll need testnet funds. There are two methods to obtain them:
+
+- zkSync Faucet: similar to using a Sepolia faucet, this method allows you to request testnet funds directly.
+- zkSync Bridge: this method involves transferring funds from Ethereum testnet to zkSync testnet. While free faucets can sometimes be unreliable, bridging offers a more consistent solution.
+
+Deploying
+To deploy a contract to ZK-Sync, there are a few key steps to follow. First, it's crucial to configure zkSync in your Metamask wallet. Next, you'll need to acquire testnet ETH, which is necessary for deploying and testing your contract.

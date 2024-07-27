@@ -1,111 +1,70 @@
-# Functions
+# Arrays and structs
 
+You can follow along with the video course from here.
 Introduction
-In the previous lesson, we added a storage variable favoriteNumber within our first smart contract and explored different solidity types. In this lesson, you'll discover how to update and retrieve a storage variable, while also learning about functions, visibility, deployment, transactions, gas usage and variable scope.
-Building the store function
-📋 To store the favoriteNumber variable, we need to implement a new function. In Solidity, functions - or methods, are portions of code designed to execute specific tasks within the overall codebase. We'll call this new function store, and it will be responsible for updating the favoriteNumber variable
+Up to this point, the `SimpleStorage` contract allows for storing, updating, and viewing a single favorite number. In this lesson, we'll enhance the code to store multiple numbers, enabling more than one person to store their values. We'll learn how to create a list of favorite numbers using arrays, and we'll explore the structs keyword for creating new types in Solidity.
+Arrays and struct
+First we need to replace the `uint256 favoriteNumber` with a list of uint256 numbers:
 
-```bash
-contract SimpleStorage {
-
-    uint256 favoriteNumber; // a function will update this variable
-
-    // the function will be written here
-}
-Functions are identified by the keyword function, followed by a custom name (e.g. "store") and any additional parameters enclosed in rounded parentheses (). These parameters represent the values sent to our function. In this case, we inform the store function that we want to update favoriteNumber with some other value _favoriteNumber:
-contract SimpleStorage {
-
-    uint256 favoriteNumber; // storage variable: it's stored in a section of the blockchain called "Storage"
-
-    function store(uint256 _favoriteNumber) public {
-        // the variable favorite number is updated with the value that is contained into the parameter `_favoriteNumber`
-        favoriteNumber = _favoriteNumber;
-    }
-}
-
+```solidity
+uint256[] list_of_favorite_numbers;
 ```
 
-The content of the function is placed within the curly brackets {}. The prefix \_ before \_favoriteNumber is used to emphasise that the local variable \_favoriteNumber is a different variable from the state variable favoriteNumber. This helps prevent potential confusion when dealing with different variables with similar names in complex codebases.
-Deploying the smart contract
-You can test out this function in the Remix VM environment. At this stage, you can compile your code by navigating to the compile tab and hitting Compile. After compiling, navigate to the tab Deploy and Run Transactions to test your function.
-The Deploy and Run Transactions tab holds a variety of parameters that are used during the deployment process. You'll be assigned an account with some ETH to deploy your smart contract.
-In this environment, your contract is assigned a unique address. You can re-access your deployed contract by expanding the Deployed Contracts interface and simultaneously opening the terminal, which shows log data of all contract deployments and transactions.
-If we open the Remix terminal we can see that deploying the contract has just sent a simulated transaction on the Remix environment. You can check out its details such as status, hash, from, to and gas.
+The brackets indicate that we have a list of `uint256`, an array of numbers. If we want to initialize this array we can do so by specifying its content:
 
-👀❗IMPORTANT
-The process of sending a transaction is the same for deploying a contract and for sending Ethers. The only difference is that the machine-readable code of the deployed contract is placed inside the data field of the deployment transaction.
-Transactions creation
-Let's send a transaction to the store function to change the value of the variable favoriteNumber: you can insert a number and press the store button in Remix. A transaction is initiated and after some time, its status will change from pending to complete.
-💸 From the accounts section, it becomes visible that ETH is being consumed every time a transaction is submitted. When the state of the blockchain is modified (e.g. deploying a contract, sending ETH, ..), is done by sending a transaction that consumes gas. Executing the store function is more expensive than just transferring ETH between accounts, with the rising gas expenses primarily associated (though not exclusively) with the code length.
-Verifying the stored value
-This contract is missing a way to check if the number has been updated: now we can store a value but we cannot be sure if the transaction actually changed the variable value.
-The default visibility of the favoriteNumber variable is internal, preventing external contracts and users from viewing it.
-🗒️ NOTE
-_Appending the public keyword next to a variable will automatically change its visibility and it will generate a get function._
-
-```bash
-uint256 public favoriteNumber;
+```solidity
+uint256[] list_of_favorite_numbers = [0, 78, 90];
 ```
 
-_After completing compilation and deployment, a button labelled favoriteNumber will become visible. When pressed, it should return the most recent stored value of the variable favoriteNumber._
+> 🗒️ NOTE
 
-_Visibility
-In Solidity, functions and variables can have one of these four visibility specifiers:_
+Arrays are zero-indexed: the first element is at position zero (0), the second is position (index) 1, and so on.
+The issue with this data structure is that we cannot link the owner with its favorite value. One solution is to establish a new type using the `struct` keyword, named `Person`, which is made of two attributes: a favorite number and a name.
 
-- 🌎 public: accessible from both inside the contract and from external contracts
-- 🏠 private: accessible only within the current contract. It does not hide a value but only restricts its access.
-- 🌲 external: used only for functions. Visible only from outside the contract.
-- 🏠🏠 internal: accessible by the current contract and any contracts derived from it.
-
-If a visibility specifier is not given, it defaults to `internal`.
-Pure and View keywords
-_The terms `view` and pure are used when a function reads values from the blockchain without altering its state. Such functions will not initiate transactions but rather make calls, represented as blue buttons in the Remix interface. A pure function will prohibit any reading from the state or storage._
-
-```bash
-function retrieve() public view returns(uint256){
-    return favoriteNumber;
+```solidity
+struct Person {
+    uint256 my_favorite_number;
+    string name;
 }
 ```
 
-```bash
-function retrieve() public pure returns(uint256){
-    return 7;
+> 🚧 WARNING
+
+Rename the variables `favorite_number` to avoid name clashes
+From this struct, we can instantiate a variable `my_friend` that has the type `Person`, with a favorite number of seven and the name 'Pat'. We can retrieve these details using the getter function that was generated by the `public` keyword.
+
+```solidity
+Person public my_friend = Person(7, 'Pat');
+/* equals to
+Person public my_friend = Person({
+    favoriteNumber:7,
+    name:'Pat'});
+*/
+```
+
+Array of struct
+Creating individual variables that represent several people might become a tedious task, due to the repetitive steps of the process. Instead of manually instantiating a variable for each person, we can combine the two concepts we just learned about: arrays and structs.
+
+```solidity
+Person[] public list_of_people; // this is a dynamic array
+Person[3] public another_list_of_three_people; // this is a static array
+```
+
+When using a dynamic array, we can add as many `Person` objects as we like, as the size of the array it's not static but can grow and shrink. We can access each Person object in our array by its index.
+To add people to this list, we can create a function that populates the array:
+
+```solidity
+function add_person(string memory _name, uint256 _favorite_number) public {
+    list_of_people.push(Person(_favorite_number, _name));
 }
 ```
 
-The keyword returns specifies the type(s) of value a function will return.
-
-🚧 WARNING
-
-While calling view or pure functions doesn’t typically require gas, they do require it when called by another function that modifies the state or storage through a transaction (e.g. calling the function retrieve inside the function storage). This cost is called execution cost and it will add up to the transaction cost.
-The scope of a variable
-The scope of a variable refers to the context within which it is defined and accessible. This context is usually determined by the block of code, typically enclosed in curly braces {}, where the variable is declared. To access the same variable across different functions, it should be declared inside the scope of the main contract.
-
-```bash
-function store(uint256 _favoriteNumber) public {
-    favoriteNumber = _favoriteNumber;
-    uint256 testVar = 5;
-}
-
-function something() public {
-   testVar = 6; // will raise a compilation error
-   favoriteNumber = 7; // this can be accessed because it's in the main contract scope
-}
-```
-
+`add_person` is a function that takes two variables as input - the name and favorite number of the person. It creates first a new `Person` object and then it pushes it to our `list_of_people` array.
 Conclusion
-In this lesson, you have learned how to build a function in Solidity, define its visibility, and understand how it operates on values within a smart contract. You have also explored different transactions and their gas consumption.
-🧑‍💻 Test yourself
+With these features, our Solidity contract can now store multiple favorite numbers, each associated with a specific person. The `add_person` function creates a new `Person` struct and adds it to the `list_of_people` state variable. We can then view each person's name and favorite number by accessing the `Person` object through the array index.
 
-- 📕 Describe the four visibility keywords and their impact on the code.
-- 📕 What's the difference between view and pure?
-- 📕 In which circumstances a pure function will incur gas costs?
-- 📕 Explain what a scope is and provide an example of an incorrect scope.
-- 📕 What's the difference between a transaction that deploys a contract and a transaction that transfers ETH?
-- 🧑‍💻 Write a contract that features 3 functions:
+Test yourself
 
-```bash
-- a view function that can be accessed only by the current contract
-- a pure function that's not accessible within the current contract
-- a view function that can be accessed from children's contracts
-```
+- 📕 Define the difference between a dynamic array and a static array. Make an example of each.
+- 📕 What is an array and what is a struct?
+- 🧑‍💻 Create a smart contract that can store and view a list of animals. Add manually three (3) animals and give the possibility to the user to manually add an indefinite number of animals into the smart contract.

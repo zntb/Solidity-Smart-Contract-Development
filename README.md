@@ -1,33 +1,40 @@
-# Storage factory introduction
+## Setting the project
 
 You can follow along with the video course from here.
 Introduction
-You can find the code for this section in the Remix Storage Factory Github repository. In these nine lessons we'll work with three new contracts:
+In this StorageFactory setup, we'll explore what composability means, showing its ability to deploy and interact with external SimpleStorage contracts.
+StorageFactory setup
+You can begin by visiting the Github repository of the previous section and copying the contract SimpleStorage inside Remix. This contract allows to store a favorite number, a list of people with their favorite number, a mapping and different functionalities to interact with them. This lesson aims to create a new contract that can deploy and interact with SimpleStorage.
 
-- SimpleStorage.sol - the contract we build in the previous section, with some modifications
-- AddFiveStorage.sol - a child contract of SimpleStorage that leverages inheritance
-- StorageFactory.sol - a contract that will deploy a SimpleStorage contract and interact with it
+> 👀❗IMPORTANT
+> One of the fundamental aspects of blockchain development is the seamless and permissionless interaction between contracts, known as composability. This is particularly crucial in decentralized finance (DeFi), where complex financial products interact effortlessly through common smart contract interfaces.
 
-Section overview
+Let's set up the backbone of the code, that contains the function `createSimplestorageContract`. This function will deploy a SimpleStorage contract and save the result into a storage variable:
 
 ```solidity
-contract SimpleStorage {
-    SimpleStorage[] public listOfSimpleStorageContracts;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.18;
 
-    function createSimpleStorageContract() public {};
-    function sfStore(uint256 _simpleStorageIndex, uint256 _simpleStorageNumber) public {};
-    function sfGet(uint256 _simpleStorageIndex) public view returns (uint256) {}
+contract StorageFactory {
+
+    function createSimplestorageContract() public {
+        //how does StorageFactory know what SimpleStorage looks like?
+    }
 }
 ```
 
-After deploying StorageFactory and executing its function createSimpleStorageContract, we can observe a new transaction appear in the Remix terminal. It's a deployment transaction of the SimpleStorage contract, executed by the StorageFactory contract.
-It's possible to interact with this newly deployed SimpleStorage via the store function. We'll do this by using the sfStore function from the StorageFactory contract. This function accepts two parameters: the index of a deployed SimpleStorage contract, which will be '0' since we just deployed one contract, and the value of a favoriteNumber.
-The sfGet function, when given the input '0', will indeed return the number provided by the previous function. The address of the SimpleStorage contract can then be retrieved by clicking on the get function listOfSimpleStorageContracts.
+We need to establish a connection between the two contracts, since StorageFactory needs to have a complete knowledge of SimpleStorage. One first approach could be copying the SimpleStorage contract above StorageFactory.
+
+> 🗒️ NOTE
+> It's allowed to have multiple contracts in the same file. As best practice, however, it's recommended to use only one file for each contract
+
+> 💡 TIP
+> You can avoid confusion by keeping open only the file(s) you're currently working on.
 
 Conclusion
-The StorageFactory contract manages numerous instances of an external contract SimpleStorage. It provides functionality to deploy new contract instances dynamically and allows for the storage and retrieval of values from each instance. These instances are maintained and organized within an array, enabling efficient tracking and interaction.
+In this setup, we'll delve into the concept of composability and develop the StorageFactory contract, which will be capable of deploying and interacting with a SimpleStorage contract.
 
 🧑‍💻 Test yourself
 
-- 📕 What is the primary role of the StorageFactory contract?
-- 📕 Why is it important to specify the index when calling the sfStore function?
+- 📕 What does composability mean?
+- 📕 How many contracts is possible to deploy inside one .sol file?

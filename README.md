@@ -1,43 +1,48 @@
-# Solidity imports
+# Use AI to help pt.1
 
 You can follow along with the video course from here.
 Introduction
-In the previous lesson, we integrated the SimpleStorage code directly into the StorageFactory contract. This allowed StorageFactory to have full access to the SimpleStorage contract’s functionality. In this lesson, we will explore a more efficient way to arrange and organize the code by using the import statement.
-Importing code
-The import keyword enables a contract to utilize code from other files without needing to include the entire codebase directly within the contract. Here are two of the main advantages that the import keyword provides:
-
-- No cluttering: it prevents your current file from being cluttered with numerous lines of code, keeping it clean and organized.
-  -Simplified maintenance: by keeping the code in separate files, it becomes easier to maintain and update individual components without affecting the entire codebase. For example, if we change some lines inside SimpleStorage, we would have also to constantly copy-paste the modified content into StorageFactory
-
-You can now remove the previously added SimpleStorage code and replace it with the import shorthand:
+If you run into (a lot of) questions, it means that you are thinking critically and you are approaching the subject the right way. In this lesson, we'll do an AI-chat example and learn how to effectively ask questions. AI chat platforms like ChatGPT and Bard effectiveness of the answers.
+Ask questions effectively
+For example, let's say that you cannot understand the difference between simpleStorage and SimpleStorage very well:
 
 ```solidity
-import "./SimpleStorage.sol";
+simpleStorage = new SimpleStorage();
 ```
 
-> 🚧 WARNING
-> All the solidity contracts should be compiled together using the same compiler version. It's important to ensure consistency between compiler versions across files since each one will have its own `pragma` statement.
+We can ask the AI to clarify it by:
 
-Named Imports
-Let's assume for a moment that SimpleStorage would contain multiple contracts, e.g. SimpleStorage, SimpleStorage1, SimpleStorage2, which are quite extensive in size. If we import the whole file as we did before, the statement will replace the import directive with all the code contained in SimpleStorage.sol. This will result in an unnecessary expensive deployment of the StorageFactory contract.
-This can be prevented with named imports, which allow you to selectively import only the specific contracts you intend to use:
+- highlighting only the line(s) you're confused about and copy it
+- Paste these lines within your question in a code block format. You can create a code block by adding three backticks ``before and three backticks after some text. This will explicitly indicate to the AI that you are referring to a piece of code and not just to a simple text.
 
-```solidity
-import { SimpleStorage } from "./SimpleStorage.sol";
-```
+This is the AI prompt:
+Hi, I'm having a hard time understanding the difference between these simple storages on this line:
 
-You can also use named imports to import multiple contracts:
+use 3 backticks to create a code block without of quotes:
 
-```solidity
-import { SimpleStorage, SimpleStorage1 } from "./SimpleStorage.sol";
-```
+"```"
+// paste the confusing line of code here
+
+"```"
+
+Here is my full code:
+
+"```"
+// paste the full code here
+
+"```"
+
+AI answer
+The AI can provide insightful and very comprehensive answers. For instance, an AI may indicate that simpleStorage is a variable of type SimpleStorage, which is a contract defined in the file SimpleStorage.sol.
 
 > 👀❗IMPORTANT
-> Try to always default to named imports instead of importing the entire file.
+> AI systems are highly efficient at solving basic coding tasks. However, as the complexity of codebases and projects increases, the effectiveness of AI begins to diminish. Advanced tasks often require deep contextual understanding, innovative problem-solving, and area integrations where current AI capabilities fall short.
 
+Other resources
+Despite their overwhelming benefits, AI chat platforms are not infallible and they can get things wrong. During that time, you can engage in other platforms like Stack Exchange, or the discussion forums related to the course on the topic you're studying. For instance, when querying about SimpleStorage, an AI response might refer to a 'stored data variable', which doesn't exist in the code you provided. This demonstrates how AI often operates on context-based inference and may occasionally connect to unrelated concepts.
 Conclusion
-The import keyword allows a contract to use code from other files without including the entire codebase. However, it can introduce compilation issues if different compiler versions are used in these files.
+AI systems are excellent for basic coding tasks but may struggle with complex projects, which require deep understanding and innovative solutions. For more precise help, highlight specific code lines in a code block or you can use additional resources like Stack Exchange for further clarification.
+
 🧑‍💻 Test yourself
 
-- 📕 What's a named import and what are the advantages of using it?
-- 📕 In which way the pragma keyword can cause issues while using the import statement? Make 2 examples.
+- 📕 Review the first section of this Solidity course again. Identify three concepts that seem unclear and ask the AI to explain them to you.

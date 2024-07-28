@@ -1,4 +1,5 @@
 {
   "solidity.compileUsingRemoteVersion": "latest",
-  "cSpell.words": ["Frens", "Phind", "Sepolia", "struct", "structs", "Zksync"]
+  "cSpell.words": ["Frens", "Phind", "Sepolia", "struct", "structs", "Zksync"],
+  "workbench.editor.enablePreview": false
 }

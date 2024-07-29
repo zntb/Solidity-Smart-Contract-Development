@@ -1,74 +1,45 @@
-# Inheritance in Solidity
+# Sections summary and recap
 
 You can follow along with the video course from here.
 Introduction
-In this lesson, we are going to introduce the concept of inheritance and overriding, two powerful tools that allow developers to create more modular, maintainable, and reusable smart contracts. By leveraging these techniques, you can build upon existing contracts and customize their functions.
-Inheritance
-We are going to enhance the SimpleStorage contract by adding a new functionality: the ability to add five (5) to the stored favoriteNumber. To achieve this, we could duplicate the existing SimpleStorage contract and make changes to the new version. However, this approach leads to redundant code. A better practice could be to utilize inheritance, wich is the mechanism that allows the AddFiveStorage contract to derive all the functionalities of SimpleStorage.
-Let's begin by creating a new file AddFiveStorage.sol and name-importing SimpleStorage.sol:
+This section covered how to deploy contracts, how to import and interact with them, and using inheritance to customize their functionalities.
+Deploying and importing
+We delved into the use of the new keyword to deploy multiple instances of a contract, allowing for the creation of numerous contract instances as needed.
+Contracts can also be imported, which is equivalent to copying the code into the file but with the advantage of enhanced code reusability and modularity. It's good practice to use named imports, selecting only the contracts we intend to use from the file.
 
 ```solidity
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.18;
-import { SimpleStorage } from "./SimpleStorage.sol";
+import { Contract as MyContract } from "./myOtherContract.sol";
+```
 
+Contracts interaction
+Solidity lets you interact with other contracts. To do so we need the contract's address and its ABI (Application Binary Interface):
+
+```solidity
 contract AddFiveStorage is SimpleStorage {}
 ```
 
-The is keyword signifies inheritance and links the parent contract SimpleStorage to its child contract, AddFiveStorage.
-Override and virtual
-The AddFiveStorage contract now inherits all methods from SimpleStorage. It's possible to add new functions to it, for example:
+Inheritance and overriding
+A contract can also derive functions from other contracts through inheritance. This can be obtained through the is keyword. To explicitly override a function from the parent contract, the override keyword is used in the child method. The parent's function must be marked as virtual to allow this interaction.
 
 ```solidity
-function sayHello() public pure returns (string memory) {
-  return "Hello";
+//child contract
+import "./ParentContract.sol";
+contract ChildContract is ParentContract {
+  function store(uint256 _num) public override {}
 }
 ```
 
-We can also modify existing functions from SimpleStorage by using the override keyword. Let's say that we want to modify the store function, adding '5' to the favorite number being stored. If we copy the exact signature of the store function, an error will occur:
-
 ```solidity
-function store(uint256 _newFavNumber) public {}
-```
-
-```solidity
-TypeError: Overriding function is missing "override" specifier.
-```
-
-> 🗒️ NOTE
-> To override a method from the parent contract, we must replicate the exact function signature, including its name, parameters and adding the visibility and the override keyword to it:
-
-```solidity
-function store(uint256 _newFavNumber) public override {}
-```
-
-Yet, another error will pop up:
-
-```solidity
-TypeError: Trying to override a non-virtual function.
-```
-
-To address this, we need to mark the store function in SimpleStorage.sol as virtual, enabling it to be overridden by child contracts:
-
-```solidity
-function store(uint256 favNumber) public virtual {
+//parent contract
+function store(uint256 _num) public virtual {
   // function body
 }
 ```
 
-Finally, we can add the new functionality to the store function in AddFiveStorage, allowing it to add '5' to the stored favoriteNumber:
-
-```solidity
-function store(uint256 _newFavNumber) public override {
-  favoriteNumber = _newFavNumber + 5;
-}
-```
-
 Conclusion
-In this lesson, we utilized inheritance to modify the SimpleStorage contract, without rewriting all its code. After deploying the contract AddFiveStorage and storing the number 2, it will return the favoriteNumber 7. This confirms that the store function in AddFiveStorage contract successfully overrides the existent store function in SimpleStorage.
+In this section, we explored deploying multiple contract instances using the new keyword and enhancing code reusability through contract imports. We also covered interacting with other contracts using their address and ABI. Additionally, we learned about inheritance and function overriding, allowing derived contracts to customize inherited functionalities. 💡 TIP
+When you finish a section, take a moment to acknowledge your progress, celebrate it and share your achievements with your community.
 
 🧑‍💻 Test yourself
 
-- 📕 Why do we need inheritance to extend a contract's functionality?
-- 📕 How are the keywords override and virtual used together?
-- 🧑‍💻 Create a contract Squared that overrides the store function and returns the favorite number squared.
+- 🏆 Attempt to answer all the theoretical questions from lesson 1 through 7, and then go back again to complete all the coding tasks.

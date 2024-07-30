@@ -2,11 +2,14 @@
   "solidity.compileUsingRemoteVersion": "latest",
   "cSpell.words": [
     "authorised",
+    "Chainlink",
+    "Chainlink's",
     "Frens",
     "Phind",
     "Sepolia",
     "struct",
     "structs",
+    "univocally",
     "Zksync"
   ],
   "workbench.editor.enablePreview": false

@@ -8,14 +8,17 @@ pragma solidity ^0.8.19;
 import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
 
 contract FundMe {
-    uint256 public minimumUsd = 5;
+    uint256 public minimumUsd = 5e18;
 
     function fund() public payable {
         // allow users to send $
         // have a minimum of $ sent $5
         // 1. How do we send ETH to this contract?
 
-        require(msg.value >= minimumUsd, "Did'nt send enough ETH"); // 1e18 = 1 ETH = 1000000000000000000 = 1 * 10 ** 18
+        require(
+            getConversionRate(msg.value) >= minimumUsd,
+            "Did'nt send enough ETH"
+        ); // 1e18 = 1 ETH = 1000000000000000000 = 1 * 10 ** 18
     }
 
     // function withdraw() public {}
@@ -33,7 +36,17 @@ contract FundMe {
         return uint256(price * 1e10);
     }
 
-    function getConversionRate() public {}
+    function getConversionRate(
+        uint256 ethAmount
+    ) public view returns (uint256) {
+        // 1 ETH ?
+        // 2000_000000000000000000
+        uint256 ethPrice = getPrice();
+        // 2000_000000000000000000 * 1_000000000000000000 / 1e18
+        // $2000 = 1 ETH
+        uint256 ethAmountInUsd = (ethPrice * ethAmount) / 1e18;
+        return ethAmountInUsd;
+    }
 
     function getVersion() public view returns (uint256) {
         return

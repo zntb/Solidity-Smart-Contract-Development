@@ -1,79 +1,63 @@
-# Getting real world price data from Chainlink
+# Solidity math
 
 ## Introduction
 
-The `AggregatorV3Interface` provides a streamlined ABI for interacting with the Data Feed contract. In this lesson, we'll explore how to retrieve pricing information from it.
+In this lesson, we will guide you through converting the value of ETH to USD. We'll use the previously defined `getPrice` function within the new `getConversionRate` function.
 
-### Creating a New Contract Instance
+### The `getPrice` and `getConversionRate` Functions
 
-The `AggregatorV3Interface` includes the `latestRoundData` function, which retrieves the latest cryptocurrency price from the specified contract. We'll start by declaring a new variable, `priceFeed`, of type `AggregatorV3Interface`. This interface requires the address of the Data Feed contract deployed on the Sepolia Network.
+The `getPrice` function returns the current value of Ethereum in USD as a `uint256`.\
+The `getConversionRate` function converts a specified amount of ETH to its USD equivalent.
 
-```solidity
-AggregatorV3Interface priceFeed = AggregatorV3Interface(0x1b44F3514812d835EB1BDB0acB33d3fA3351Ee43);
-```
+### Decimal Places
 
-### The `latestRoundData` Function
-
-We can call the `latestRoundData()` function on this interface to obtain several values, including the latest price.
+In Solidity, only integer values are used, as the language does not support floating-point numbers.
 
 ```solidity
-function latestRoundData()
-  external
-  view
-  returns (
-    uint80 roundId,
-    int256 answer,
-    uint256 startedAt,
-    uint256 updatedAt,
-    uint80 answeredInRound
-  );
-```
-
-For now, we'll focus on the `answer` value and ignore the other returned values by using commas as placeholders for the unneeded variables.
-
-```solidity
-function getLatestPrice() public view returns (int) {
-  (, int price, , , ) = priceFeed.latestRoundData();
-  return price;
+function getConversionRate(uint256 ethAmount) internal view returns (uint256) {
+  uint256 ethPrice = getPrice();
+  uint256 ethAmountInUsd = (ethPrice * ethAmount) / 1e18;
+  return ethAmountInUsd;
 }
 ```
 
-Our `getLatestPrice()` function now retrieves the latest ETH price in USD from the `latestRoundData()` function of the Data Feed contract. The returned price is an `int256` with a precision of 1e8, as indicated by the `decimals` function.
+> 🗒️ **NOTE**
+> The line `uint256 ethAmountInUsd = (ethPrice * ethAmount)` results in a value with a precision of 1e18 \* 1e18 = 1e36. To bring the precision of `ethAmountInUsd` back to 1e18, we need to divide the result by 1e18.
 
-### Decimals
+> 🔥 **CAUTION**
+> Always multiply before dividing to maintain precision and avoid truncation errors. For instance, in floating-point arithmetic, `(5/3) * 2` equals approximately 3.33. In Solidity, `(5/3)` equals 1, which when multiplied by 2 yields 2. If you multiply first `(5*2)` and then divide by 3, you achieve better precision.
 
-- `msg.value` is a `uint256` value with 18 decimal places.
-- `answer` is an `int256` value with 8 decimal places (USD-based pairs use 8 decimal places, while ETH-based pairs use 18 decimal places).
+### Example of `getConversionRate`
 
-This means the `price` returned from our `latestRoundData` function isn't directly compatible with `msg.value`. To match the decimal places, we multiply `price` by 1e10:
+- `ethAmount` is set at 1 ETH, with 1e18 precision.
+- `ethPrice` is set at 2000 USD, with 1e18 precision, resulting in 2000e18.
+- `ethPrice * ethAmount` results in 2000e18.
+- To scale down `ethAmountInUsd` to 1e18 precision, divide `ethPrice * ethAmount` by 1e18.
+
+### Checking Minimum USD Value
+
+We can verify if users send at least 5 USD to our contract:
 
 ```solidity
-return price * 1e10;
+require(getConversionRate(msg.value) >= MINIMUM_USD, "You need to spend more ETH!");
 ```
 
-### Typecasting
+Since `getConversionRate` returns a value with 18 decimal places, we need to multiply `5` by `1e18`, resulting in `5 * 1e18` (equivalent to `5 * 10**18`).
 
-Typecasting, or type conversion, involves converting a value from one data type to another. In Solidity, not all data types can be converted due to differences in their underlying representations and the potential for data loss. However, certain conversions, such as from `int` to `uint`, are allowed.
+### Deployment to the Testnet
 
-```solidity
-return uint(price) * 1e10;
-```
-
-We can finalize our `view` function as follows:
+In Remix, we can deploy the `FundMe` contract to a testnet. After deployment, the `getPrice` function can be called to obtain the current value of Ethereum. It's also possible to send money to this contract, and an error will be triggered if the ETH amount is less than 5 USD.
 
 ```solidity
-function getLatestPrice() public view returns (uint256) {
-  (, int answer, , , ) = priceFeed.latestRoundData();
-  return uint(answer) * 1e10;
-}
+Gas estimation failed. Error execution reverted, didn't send enough ETH.
 ```
 
 ### Conclusion
 
-This complete `getLatestPrice` function retrieves the latest price, adjusts the decimal places, and converts the value to an unsigned integer, making it compatible for its use inside other functions.
+In this lesson, we've demonstrated how to convert ETH to USD using the `getConversionRate` function, ensuring precise calculations by handling decimal places correctly.
 
 ### 🧑‍💻 Test yourself
 
-1. 📕 Why we need to multiply the latest ETH price by 1e10?
-2. 📕 What's the result of the typecasting `uint256(-2)`?
-3. 🧑‍💻 Create a contract with a `getLatestBTCPriceInETH()` function that retrieves the latest BTC price in ETH.
+1. 📕 Why is it important to multiply before dividing in Solidity calculations, and how does this practice help maintain precision?
+2. 📕 What is the purpose of the getConversionRate function, and how does it utilize the getPrice function to convert ETH to USD?
+3. 🧑‍💻 Create a function `convertUsdToEth(uint256 usdAmount, uint256 ethPrice) public returns(uint256)`, that converts a given amount of USD to its equivalent value in ETH.

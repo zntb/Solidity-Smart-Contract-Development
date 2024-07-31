@@ -1,66 +1,56 @@
-# Mid section recap
+# Solidity interfaces
 
 ## Introduction
 
-From lessons 1 to 5 we've explored the usage of the keyword `payable`, the global property `msg.value` and what happens when a function reverts.
+In this part, we'll learn how to **convert** Ethereum (ETH) into Dollars (USD) and how to use **Interfaces**.
 
-### payable, required, msg.value
+### Converting Ethereum into USD
 
-To enable a function to receive a native blockchain token such as Ethereum, it must be marked as `payable`:
-
-```solidity
-function deposit() public payable {
-  balances[msg.sender] += msg.value;
-}
-```
-
-If we want a function to fail under certain conditions, we can use the `require` statement. For example, in a bank transfer scenario, we want the operation to fail if the sender does not have enough balance. Here's an example:
+We begin by trying to convert the `msg.value`, which is now specified in ETH, into USD. This process requires fetching the **current USD market price** of Ethereum and using it to convert the `msg.value` amount into USD.
 
 ```solidity
-function transfer(address recipient, uint amount) public {
-  require(balances[msg.sender] >= amount);
-  balances[msg.sender] -= amount;
-  balances[recipient] += amount;
-}
+// Function to get the price of Ethereum in USD
+function getPrice() public {}
+// Function to convert a value based on the price
+function getConversionRate() public {}
 ```
 
-In this code, if the condition `balances[msg.sender] >= amount` is not met, the transaction will revert. This means the operation undoes any previous actions and will not consume the total maximum gas allocated by the user.
+### Chainlink Data Feed
 
-The Solidity global property msg.value contains the amount of cryptocurrency sent with a transaction.
+Our primary source for Ethereum prices is a **Chainlink Data Feed**. [Chainlink Data Feed documentation](https://docs.chain.link/data-feeds/using-data-feeds) provides an example of how to interact with a Data Feed contract:
 
-### Integrating External Data with Chainlink
+1. `AggregatorV3Interface`: a contract that takes a _Data Feed address_ as input. This contract maintains the ETH/USD price updated.
+2. `latestRoundData`: a function that returns an `answer`, representing the latest Ethereum price.
 
-Chainlink is a revolutionary technology that enables the integration of external data and computation into smart contracts. It provides a decentralized way of **injecting data**, which is particularly useful for assets whose values fluctuate over time. For instance, if a smart contract deals with real-world assets such as stocks or commodities, obtaining real-time pricing information is crucial.
+To utilize the **Price Feed Contract**, we need its address and its ABI. The address is available in the Chainlink documentation under the [Price Feed Contract Addresses](https://docs.chain.link/data-feeds/price-feeds/addresses). For our purposes, we'll use ETH/USD price feed.
+
+### Interface
+
+To obtain the ABI, you can import, compile, and deploy the PriceFeed contract itself. In the previous section, we imported the `SimpleStorage` contract into the `StorageFactory` contract, deployed it, and only then we were able to use its functions.
+
+An alternative method involves the use of an **Interface**, which defines methods signature without their implementation logic. If compiled, the Price Feed Interface, it would return the ABI of the Price Feed contract itself, which was previously deployed on the blockchain. We don't need to know anything about the function implementations, only knowing the `AggregatorV3Interface` methods will suffice. The Price Feed interface, called `Aggregator V3 Interface`, can be found in [Chainlink's GitHub repository](https://github.com/smartcontractkit/chainlink/blob/develop/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol).
 
 > 🗒️ **NOTE**
-> Chainlink enables smart contracts to interact with real-world data and services without sacrificing the security and reliability guarantees inherent to blockchain technology.
+> Interfaces allow different contracts to interact seamlessly by ensuring they share a common set of functionalities.
 
-Consider a smart contract that deals with a commodity like gold. _Chainlink Price Feeds_ can provide real-time gold prices, allowing the smart contract to reflect the current market prices.
+We can test the Interface usage by calling the `version()` function:
 
 ```solidity
-import "@chainlink/contracts/src/v0.6/interfaces/AggregatorV3Interface.sol";
-contract GoldPriceContract {
-  AggregatorV3Interface internal priceFeed;
-  //The Chainlink price feed contract address
-  constructor() public {
-    priceFeed = AggregatorV3Interface(
-      0x8468b2bDCE073A157E560AA4D9CcF6dB1DB98507
-    );
-  }
-  // Get the latest gold price
-  function getLatestGoldPrice() public view returns (int) {
-    (, int price, , , ) = priceFeed.latestRoundData();
-    return price;
-  }
+function getVersion() public view returns (uint256) {
+  return
+    AggregatorV3Interface(0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419).version();
 }
 ```
 
-In this example, _Chainlink Feeds_ are used to query the latest price of gold, ensuring the smart contract has up-to-date market information.
+> 🗒️ **NOTE**
+> It's best to work on testnets only after your deployment is complete, as it can be time and resource consuming.
 
 ### Conclusion
 
-Understanding and utilizing payable, require, and msg.value is crucial for handling transactions in Solidity. Besides that, Chainlink enhances smart contract functionality by providing access to real-world data, allowing for more dynamic and reliable decentralized applications.
+Using interfaces is a common and effective way to interact with external contracts. First, obtain the interface of the external contract, compile it to get the ABI, and then use the deployed contract's address. This allows you to call any function available at that address seamlessly.
 
 ### 🧑‍💻 Test yourself
 
-1. 📕 What are the three primary topics covered from lessons 1 to 5?
+1. 📕 Explain the role of interfaces in Solidity and why are they advantageous.
+2. 📕 What are the steps required to convert a variable containing a value in ETH to its equivalent in USD?
+3. 🧑‍💻 Implement another function on the `FundMe` contract that implements the `decimals()` methods of the Data Feed address.

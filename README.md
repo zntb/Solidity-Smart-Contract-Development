@@ -1,63 +1,44 @@
-# Solidity math
+# Msg sender explained
 
 ## Introduction
 
-In this lesson, we will guide you through converting the value of ETH to USD. We'll use the previously defined `getPrice` function within the new `getConversionRate` function.
+In this lesson, we will learn how to track addresses that are funding the contract and the amounts they will send to it.
 
-### The `getPrice` and `getConversionRate` Functions
+### Tracking Funders
 
-The `getPrice` function returns the current value of Ethereum in USD as a `uint256`.\
-The `getConversionRate` function converts a specified amount of ETH to its USD equivalent.
-
-### Decimal Places
-
-In Solidity, only integer values are used, as the language does not support floating-point numbers.
+To track the addresses are sending money to the contract, we can create an array of addresses named `funders`:
 
 ```solidity
-function getConversionRate(uint256 ethAmount) internal view returns (uint256) {
-  uint256 ethPrice = getPrice();
-  uint256 ethAmountInUsd = (ethPrice * ethAmount) / 1e18;
-  return ethAmountInUsd;
-}
+address[] public funders;
 ```
 
-> 🗒️ **NOTE**
-> The line `uint256 ethAmountInUsd = (ethPrice * ethAmount)` results in a value with a precision of 1e18 \* 1e18 = 1e36. To bring the precision of `ethAmountInUsd` back to 1e18, we need to divide the result by 1e18.
-
-> 🔥 **CAUTION**
-> Always multiply before dividing to maintain precision and avoid truncation errors. For instance, in floating-point arithmetic, `(5/3) * 2` equals approximately 3.33. In Solidity, `(5/3)` equals 1, which when multiplied by 2 yields 2. If you multiply first `(5*2)` and then divide by 3, you achieve better precision.
-
-### Example of `getConversionRate`
-
-- `ethAmount` is set at 1 ETH, with 1e18 precision.
-- `ethPrice` is set at 2000 USD, with 1e18 precision, resulting in 2000e18.
-- `ethPrice * ethAmount` results in 2000e18.
-- To scale down `ethAmountInUsd` to 1e18 precision, divide `ethPrice * ethAmount` by 1e18.
-
-### Checking Minimum USD Value
-
-We can verify if users send at least 5 USD to our contract:
+Whenever someone sends money to the contract, we will add their address to the array with the `push` function:
 
 ```solidity
-require(getConversionRate(msg.value) >= MINIMUM_USD, "You need to spend more ETH!");
+funders.push(msg.sender);
 ```
 
-Since `getConversionRate` returns a value with 18 decimal places, we need to multiply `5` by `1e18`, resulting in `5 * 1e18` (equivalent to `5 * 10**18`).
+The `msg.sender` global variable refers to the address that **initiates the transaction**.
 
-### Deployment to the Testnet
+### Mapping Users to Funds Sent
 
-In Remix, we can deploy the `FundMe` contract to a testnet. After deployment, the `getPrice` function can be called to obtain the current value of Ethereum. It's also possible to send money to this contract, and an error will be triggered if the ETH amount is less than 5 USD.
+We can also map each funder's address to the amount they have sent using **mappings**. Let's define a mapping in Solidity:
 
 ```solidity
-Gas estimation failed. Error execution reverted, didn't send enough ETH.
+mapping(address => uint256) public addressToAmountFunded;
+```
+
+The `addressToAmountFunded` mapping associates each funder's address with the total amount they have contributed. When a new amount is sent, we can add it to the user's total contribution:
+
+```solidity
+addressToAmountFunded[msg.sender] += msg.value;
 ```
 
 ### Conclusion
 
-In this lesson, we've demonstrated how to convert ETH to USD using the `getConversionRate` function, ensuring precise calculations by handling decimal places correctly.
+We have successfully implemented a system to track users who fund the `fundMe` contract. This mechanism records every address that is sending ETH to the contract, and maps the sender's address to the total amount they have contributed.
 
 ### 🧑‍💻 Test yourself
 
-1. 📕 Why is it important to multiply before dividing in Solidity calculations, and how does this practice help maintain precision?
-2. 📕 What is the purpose of the getConversionRate function, and how does it utilize the getPrice function to convert ETH to USD?
-3. 🧑‍💻 Create a function `convertUsdToEth(uint256 usdAmount, uint256 ethPrice) public returns(uint256)`, that converts a given amount of USD to its equivalent value in ETH.
+1. 📕 Explain why we need to use the mapping `addressToAmountFunded` inside the `fundMe` contract
+2. 🧑‍💻 Implement a function `contributionCount` to monitor how many times a user calls the `fund` function to send money to the contract.

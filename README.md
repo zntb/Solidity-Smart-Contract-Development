@@ -1,44 +1,34 @@
-# Msg sender explained
+# Quick section recap
 
 ## Introduction
 
-In this lesson, we will learn how to track addresses that are funding the contract and the amounts they will send to it.
+In this recap, we'll review how to interact with an external contract and utilize its functions, understand Chainlink Price Feeds, perform Solidity math, and explore global properties.
 
-### Tracking Funders
+### Interacting with an External Contract
 
-To track the addresses are sending money to the contract, we can create an array of addresses named `funders`:
+To interact with any external contract, you need the contract's _address_ and _ABI_ (Application Binary Interface). Think of the `address` as a _house number_ that identifies the specific contract on the blockchain, while the `ABI` serves as a _manual_ that explains how to interact with the contract.
 
-```solidity
-address[] public funders;
-```
+To obtain the contract ABI, you can compile a Solidity **interface** that the target contract implements. Then, create a new instance of the interface pointing to the specific address of the deployed contract.
 
-Whenever someone sends money to the contract, we will add their address to the array with the `push` function:
+### Chainlink Price Feeds
 
-```solidity
-funders.push(msg.sender);
-```
+[Chainlink Price Feeds](https://docs.chain.link/docs/using-chainlink-reference-contracts/) provide a reliable way to access real-world data, such as pricing data, and inject it into smart contracts. This is particularly useful for executing mathematical operations in Solidity and the Ethereum Virtual Machine (EVM), where floating-point numbers are not used.
 
-The `msg.sender` global variable refers to the address that **initiates the transaction**.
+### Solidity Global Properties
 
-### Mapping Users to Funds Sent
+The [Solidity documentation](https://docs.soliditylang.org/en/latest/cheatsheet.html#block-and-transaction-properties) provides several global properties that are essential for interacting with the Ethereum blockchain. Here are two key properties:
 
-We can also map each funder's address to the amount they have sent using **mappings**. Let's define a mapping in Solidity:
+- `msg.sender`: this property refers to the address of the account that **initiated the current function call**
+- `msg.value`: this property represents the **amount of Wei** sent with a function call
 
 ```solidity
-mapping(address => uint256) public addressToAmountFunded;
+function updateValue() public payable {
+  require(msg.value >= 1 ether, "Not enough Ether provided.");
+}
 ```
 
-The `addressToAmountFunded` mapping associates each funder's address with the total amount they have contributed. When a new amount is sent, we can add it to the user's total contribution:
-
-```solidity
-addressToAmountFunded[msg.sender] += msg.value;
-```
-
-### Conclusion
-
-We have successfully implemented a system to track users who fund the `fundMe` contract. This mechanism records every address that is sending ETH to the contract, and maps the sender's address to the total amount they have contributed.
+By understanding these concepts, you can effectively interact with external contracts, leverage Chainlink Price Feeds for real-world data, and utilize Solidity's global properties for more robust smart contract development.
 
 ### 🧑‍💻 Test yourself
 
-1. 📕 Explain why we need to use the mapping `addressToAmountFunded` inside the `fundMe` contract
-2. 🧑‍💻 Implement a function `contributionCount` to monitor how many times a user calls the `fund` function to send money to the contract.
+1. 🏆 Attempt to answer all the theoretical questions from lessons 1 through 12, and then go back again to complete all the coding tasks.

@@ -1,56 +1,57 @@
-# Solidity interfaces
+# Use AI to help pt.2
 
 ## Introduction
 
-In this part, we'll learn how to **convert** Ethereum (ETH) into Dollars (USD) and how to use **Interfaces**.
+When you encounter a part that's not very clear, an AI or forum can help provide a comprehensive understanding of the topic at hand. In this lesson, we will learn how to craft effective questions and prompts.
 
-### Converting Ethereum into USD
+### getVersion function
 
-We begin by trying to convert the `msg.value`, which is now specified in ETH, into USD. This process requires fetching the **current USD market price** of Ethereum and using it to convert the `msg.value` amount into USD.
+For example, consider the mechanism behind the **Interface** construct:
 
-```solidity
-// Function to get the price of Ethereum in USD
-function getPrice() public {}
-// Function to convert a value based on the price
-function getConversionRate() public {}
-```
+```bash
+ How does this solidity function return the value `4` when I didn't define any logic in AggregatorV3Interface?
 
-### Chainlink Data Feed
-
-Our primary source for Ethereum prices is a **Chainlink Data Feed**. [Chainlink Data Feed documentation](https://docs.chain.link/data-feeds/using-data-feeds) provides an example of how to interact with a Data Feed contract:
-
-1. `AggregatorV3Interface`: a contract that takes a _Data Feed address_ as input. This contract maintains the ETH/USD price updated.
-2. `latestRoundData`: a function that returns an `answer`, representing the latest Ethereum price.
-
-To utilize the **Price Feed Contract**, we need its address and its ABI. The address is available in the Chainlink documentation under the [Price Feed Contract Addresses](https://docs.chain.link/data-feeds/price-feeds/addresses). For our purposes, we'll use ETH/USD price feed.
-
-### Interface
-
-To obtain the ABI, you can import, compile, and deploy the PriceFeed contract itself. In the previous section, we imported the `SimpleStorage` contract into the `StorageFactory` contract, deployed it, and only then we were able to use its functions.
-
-An alternative method involves the use of an **Interface**, which defines methods signature without their implementation logic. If compiled, the Price Feed Interface, it would return the ABI of the Price Feed contract itself, which was previously deployed on the blockchain. We don't need to know anything about the function implementations, only knowing the `AggregatorV3Interface` methods will suffice. The Price Feed interface, called `Aggregator V3 Interface`, can be found in [Chainlink's GitHub repository](https://github.com/smartcontractkit/chainlink/blob/develop/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol).
-
-> 🗒️ **NOTE**
-> Interfaces allow different contracts to interact seamlessly by ensuring they share a common set of functionalities.
-
-We can test the Interface usage by calling the `version()` function:
-
-```solidity
 function getVersion() public view returns (uint256) {
   return
     AggregatorV3Interface(0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419).version();
 }
 ```
 
-> 🗒️ **NOTE**
-> It's best to work on testnets only after your deployment is complete, as it can be time and resource consuming.
+Here is the answer ChatGPT 3.5 provides:
+
+```bash
+In the code you provided, the `getVersion()` function is calling the `version()` function of an instance of the `AggregatorV3Interface` contract. It appears that the contract address `0x694AA1769357215DE4FACO81bf1E309aDC325306` is being used to create an instance of the `AggregatorV3Interface`.
+
+The `AggregatorV3Interface` is an interface contract that defines a set of functions that must be implemented by another contract. It serves as a way to interact with the contract at the given address by providing a common interface.
+
+The `version()` function is called in your code is likely defined in the actual contract that implements the `AggregatorV3Interface`. This implementation contract is deployed at the specified address and is expected to have a `version()` function that returns a `uint256` value.
+
+So, the code you provided is creating an instance of the `AggregatorV3Interface` contract at the given address and then calling its `version()` function to retrieve a `uint256` value. If the implementation contract at that address has a `version()` function that returns `4`, then the `getVersion()` function will return `4` as well.
+```
+
+By _type casting_ the address to the interface, we are indicating to the Solidity compiler that there is a `version` function available at that address.
+
+### Asking more questions
+
+Since AIs excel at maintaining context, we can easily **follow up** on this answer.
+
+```bash
+What would happen if that contract address didn't have that function?
+```
+
+As explained by the AI:
+
+```bash
+If the implementation contract at the given address does not have a `version()` function or if it has a different function signature, calling `version()` on that contract will result in a compilation error or a runtime error.
+```
+
+> 🚧 **WARNING**
+> Always verify AI-provided information by consulting a discussion forum
 
 ### Conclusion
 
-Using interfaces is a common and effective way to interact with external contracts. First, obtain the interface of the external contract, compile it to get the ABI, and then use the deployed contract's address. This allows you to call any function available at that address seamlessly.
+By leveraging AI and discussion forums, you can gain a deeper understanding of complex topics and ensure your questions are thoroughly addressed.
 
 ### 🧑‍💻 Test yourself
 
-1. 📕 Explain the role of interfaces in Solidity and why are they advantageous.
-2. 📕 What are the steps required to convert a variable containing a value in ETH to its equivalent in USD?
-3. 🧑‍💻 Implement another function on the `FundMe` contract that implements the `decimals()` methods of the Data Feed address.
+1. 📕 Dive deeper into the `getVersion` function by asking AI three more questions about it

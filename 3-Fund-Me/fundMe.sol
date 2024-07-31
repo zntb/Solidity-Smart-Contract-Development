@@ -10,6 +10,10 @@ import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/shared/interf
 contract FundMe {
     uint256 public minimumUsd = 5e18;
 
+    address[] public funders;
+    mapping(address funder => uint256 amountFunded)
+        public addressToAmountFunded;
+
     function fund() public payable {
         // allow users to send $
         // have a minimum of $ sent $5
@@ -19,6 +23,10 @@ contract FundMe {
             getConversionRate(msg.value) >= minimumUsd,
             "Did'nt send enough ETH"
         ); // 1e18 = 1 ETH = 1000000000000000000 = 1 * 10 ** 18
+
+        funders.push(msg.sender);
+
+        addressToAmountFunded[msg.sender] += msg.value;
     }
 
     // function withdraw() public {}

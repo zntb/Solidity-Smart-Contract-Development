@@ -37,5 +37,9 @@ contract FundMe {
             address funder = funders[founderIndex];
             addressToAmountFunded[funder] = 0;
         }
+
+        // Reset the array
+        funders = new address[](0);
+        // Withdraw the funds
     }
 }

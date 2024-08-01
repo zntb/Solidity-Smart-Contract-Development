@@ -33,8 +33,7 @@ contract FundMe {
         addressToAmountFunded[msg.sender] += msg.value;
     }
 
-    function withdraw() public {
-        require(msg.sender == owner, "Only the owner can withdraw funds");
+    function withdraw() public onlyOwner {
         for (
             uint256 founderIndex = 0;
             founderIndex < funders.length;
@@ -54,5 +53,10 @@ contract FundMe {
         }("");
 
         require(callSuccess, "Call failed");
+    }
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Sender is not owner");
+        _;
     }
 }

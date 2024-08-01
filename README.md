@@ -1,53 +1,58 @@
-# Sending ETH from a contract
+# Smart contract constructor
 
 ## Introduction
 
-This lesson explores three different methods of sending ETH from one account to another: `transfer`, `send`, and `call`. We will understand their differences, how each one works, and when to use one instead of another.
+In this lesson, we will address a security gap present in the current `fundMe` contract.
 
-### Transfer
+### Constructor
 
-The `transfer` function is the simplest way to send Ether to a recipient address:
+Currently, **anyone** can call the `withdraw` function and drain all the funds from the contract. To fix this, we need to **restrict** the withdrawal function to the contract owner.
 
-```solidity
-payable(msg.sender).transfer(amount); // the current contract sends the Ether amount to the msg.sender
-```
+One solution could be to create a function, `callMeRightAway`, to assign the role of contract owner to the contract's creator immediately after deployment. However, this requires two transactions.
 
-It's necessary to convert the recipient address to a **payable** address to allow it to receive Ether. This can be done by wrapping `msg.sender` with the `payable` keyword.
-
-However, `transfer` has a significant limitation. It can only use up to 2300 gas and it reverts any transaction that exceeds this gas limit, as illustrated by [Solidity by Example](https://solidity-by-example.org/sending-ether/).
-
-### Send
-
-The `send` function is similar to `transfer`, but it differs in its behaviour:
+A more efficient solution is to use a **constructor** function:
 
 ```solidity
-bool success = payable(msg.sender).send(address(this).balance);
-require(success, "Send failed");
+constructor() {}
 ```
 
-Like `transfer`, `send` also has a gas limit of 2300. If the gas limit is reached, it will not revert the transaction but return a boolean value (`true` or `false`) to indicate the success or failure of the transaction. It is the developer's responsibility to handle failure correctly, and it's good practice to trigger a **revert** condition if the `send` returns `false`.
+> 🗒️ **NOTE**
+> The constructor does not use the `function` and `public` keywords.
 
-### Call
+### Assigning the Owner in the Constructor
 
-The `call` function is flexible and powerful. It can be used to call any function **without requiring its ABI**. It does not have a gas limit, and like `send`, it returns a boolean value instead of reverting like `transfer`.
+The constructor function is automatically called during contract deployment, within the same transaction that deploys the contract.
+
+We can use the constructor to set the contract's owner immediately after deployment:
 
 ```solidity
-(bool success, ) = payable(msg.sender).call{value: address(this).balance}("");
-require(success, "Call failed");
+address public owner;
+constructor() {
+    owner = msg.sender;
+}
 ```
 
-To send funds using the `call` function, we convert the address of the receiver to `payable` and add the value inside curly brackets before the parameters passed.
+Here, we initialize the state variable `owner` with the contract deployer's address (`msg.sender`).
 
-The `call` function returns two variables: a boolean for success or failure, and a byte object which stores returned data if any.
+### Modifying the Withdraw Function
 
-> 👀❗**IMPORTANT** > `call` is the recommended way of sending and receiving Ethereum or other blockchain native tokens.
+The next step is to update the `withdraw` function to ensure it can only be called by the owner:
+
+```solidity
+function withdraw() public {
+  require(msg.sender == owner, "must be owner");
+  // rest of the function here
+}
+```
+
+Before executing any withdrawal actions, we check that `msg.sender` is the owner. If the caller is not the owner, the operation **reverts** with the error message "must be the owner." This access restriction ensures that only the intended account can execute the function.
 
 ### Conclusion
 
-In conclusion, _transfer_, _send_, and _call_ are three unique methods for transferring Ether in Solidity. They vary in their syntax, behaviour, and gas limits, each offering distinct advantages and drawbacks.
+By incorporating a constructor to assign ownership and updating the withdraw function to restrict access, we have significantly improved the security of the fundMe contract. These changes ensure that only the contract owner can withdraw funds, preventing unauthorized access.
 
 ### 🧑‍💻 Test yourself
 
-1. 📕 What are the primary differences between _transfer_, _send_, and _call_ when transferring Ether?
-2. 📕 Why is it necessary to convert an address to a `payable` type before sending Ether to it?
-3. 🧑‍💻 Implement a function `callAmountTo` using `call` to send Ether from the contract to an address provided as an argument. Ensure the function handles failures appropriately.
+1. 📕 What is the purpose of a `constructor` function and how does it differ from regular functions?
+2. 📕 Why is it necessary to restrict access to the withdraw function?
+3. 🧑‍💻 Write a function called `withdrawOnlyFirstAccountRemix` that allows only the first Remix account to withdraw all funds from the contract.

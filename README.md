@@ -1,56 +1,42 @@
-# Solidity function modifiers
+# Test the smart contract without a testnet
 
 ## Introduction
 
-In this lesson, we will explore **modifiers** and how they can simplify code writing and management in Solidity. Modifiers enable developers to create reusable code snippets that can be applied to multiple functions, enhancing code readability, maintainability, and security.
+In this lesson, we'll delve into _end-to-end testing_ of a Solidity contract's deployment and execution.
 
-### Repeated Conditions
+### Deployment Transaction
 
-If we build a contract with multiple _administrative functions_, that should only be executed by the contract owner, we might repeatedly check the caller identity:
+First, we need to _compile_ the contract to ensure the code is correct. On Remix, set the **injected provider** to MetaMask and confirm it is properly synced to the testnet. Ensure you have some Sepolia Ether (ETH) in your wallet if you plan to deploy the contract on Sepolia.
 
-```solidity
-require(msg.sender == owner, "Sender is not owner");
-```
+We'll deploy the `FundMe` contract by clicking deploy and then confirming the transaction in MetaMask, which may take some time.
 
-However, repeating this line in every function clutters the contract, making it harder to read, maintain, and debug.
+### Contract Interaction
 
-### Modifiers
+After successfully deploying the `FundMe` contract, you'll see several buttons to interact with it:
 
-Modifiers in Solidity allow embedding **custom lines of code** within any function to modify its behaviour.
+- **Red button**: Payable functions (e.g., `fund`)
+- **Orange button**: Non-payable functions (e.g., `withdraw`)
+- **Blue buttons**: `view` and `pure` functions
 
-Here's how to create a modifier:
-
-```solidity
-modifier onlyOwner {
-    require(msg.sender == owner, "Sender is not owner");
-    _;
-}
-```
+The `fund` function allows us to send ETH to the contract (minimum 5 USD). The `owner` of the contract is our MetaMask account, as the **constructor** sets the deployer as the owner.
 
 > 🗒️ **NOTE**
-> The modifier is named `onlyOwner` to reflect the condition it checks.
+> If the `fund` function is called without any value or with less than 5 USD, you will encounter a gas estimation error, indicating insufficient ETH, and gas will be wasted.
 
-### The `_` (underscore)
+### Successful Transaction
 
-The underscore `_` placed in the body is a placeholder for the modified function's code. When the function with the modifier is called, the code before `_` runs first, and if it succeeds, the function's code executes next.
+If you set the amount to `0.1 ETH` and confirm it in MetaMask, you can then track the successful transaction on Etherscan. In the Etherscan transaction log, you will see that the `fundMe` balance has increased by `0.1 ETH`. The `funders` array will register your address, and the mapping `addressToAmountFunded` will record the amount of ETH sent.
 
-For example, the `onlyOwner` modifier can be applied to the `withdraw` function like this:
+### Withdraw Function and Errors
 
-```solidity
-function withdraw(uint amount) public onlyOwner {
-  // Function logic
-}
-```
+After funding the contract, we can initiate the `withdraw` function. This function can only be called by the owner; if a non-owner account attempts to withdraw, a gas estimation error will be thrown, and the function will revert.
 
-When `withdraw` is called, the contract first executes the `onlyOwner` modifier. If the `require` statement passes, the rest of the `withdraw` function executes.
-
-If the underscore `_` were placed before the `require` statement, the function's logic would execute first, followed by the `require` check, which is not the intended use case.
+Upon successful withdrawal, the `fundMe` balance, the `addressToAmountFunded` mapping, and the `funders` array will all reset to zero.
 
 ### Conclusion
 
-Using modifiers like `onlyOwner` simplifies contract development by centralizing common conditions, reducing code repetition, and enhancing contract readability and maintainability.
+In this lesson, we've explored the end-to-end process of deploying and interacting with a Solidity contract using Remix and MetaMask. We covered the deployment transaction, contract interaction, and how to handle successful transactions and potential errors.
 
 ### 🧑‍💻 Test yourself
 
-1. 📕 Why is it beneficial to use `modifiers` for access control?
-2. 🧑‍💻 Implement a modifier named `onlyAfter(uint256 _time)` that ensures a function can only be executed after a specified time.
+1. 🧑‍💻 Interact with the `FundMe` contract on Remix and explore all possible outcomes that its functions can lead to.

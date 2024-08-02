@@ -1,27 +1,31 @@
-# Deploying To Zksync
+# A recap of the advanced aspects of Solidity
 
 ## Introduction
 
-In this lesson, we'll walk through the steps to deploy the `FundMe` contract to the zkSync testnet.
+In this second part of the `FundMe` section, we have covered the majority of Solidity basics, including special functions, custom errors, immutable variables, modifiers, constructors, arrays, for loops, libraries, and much more.
 
-### Adjustments for zkSync
+### Special Functions
 
-First, we'll need the specific the correct **price feed address** for the skSync Sepolia chain, which you can find in the [Chainlink documentation](https://docs.chain.link/data-feeds/price-feeds/addresses?network=zksync&page=1). Each chain has its own unique addresses, and the ETH/USD address for the zkSync Sepolia testnet will differ from the one on Sepolia.
+We have encountered the special functions `receive`, `fallback`, and `constructor`. These functions do not require the `function` keyword before their name. The `receive` function is triggered when Ether is sent to a contract and the **data** field is empty. The `fallback` function is triggered when data is sent with a transaction, but no matching function is found.
 
-Then copy the zkSync Sepolia testnet ETH/USD address and replace the existing address in the `FundMe::getVersion` and `PriceConverter::getPrice` functions:
+### Saving Gas
+
+To save gas, Solidity provides keywords like `constant` and `immutable` for variables that can only be set once:
 
 ```solidity
-AggregatorV3Interface priceFeed = AggregatorV3Interface(0xfEefF7c3fB57d18C5C6Cdd71e45D2D0b4F9377bF); // Add ETH/USD zkSync Sepolia address here
+uint constant minimumUSD = 50 * 1e18;
 ```
 
-Since the zkSync plugin may not handle libraries well yet, you can copy the library code directly into your contract instead of importing it.
+In this example, `minimumUSD` is a constant and cannot be changed, saving gas. Unlike `constant`, which is set at compile time, `immutable` allows a variable to be assigned once during deployment. Attempts to change either `constant` or `immutable` variables will result in a compilation error.
 
-It's recommended using the correct version of the Solidity compiler by updating it to version `0.8.24` for zkSync compatibility.
+### Sending Ether
 
-### Deploying the Contract
-
-In the Environment tab, you can connect your MetaMask wallet and then **deploy and verify** the `FundMe` contract. After deployment, you can interact with the contract by checking functions like `FundMe::MINIMUM_USD`,`FundMe::getVersion` to ensure they return the expected values.
+Remix provides an easy method to send Ether to a contract. After deploying the contract, you can press the `transact` button, set the transaction's value, and omit the call data. If no call data is included, the `receive` function, if exists, will be triggered. Otherwise will be executed the `fallback` function.
 
 ### Conclusion
 
-Deploying the `FundMe` contract to the zkSync testnet involves a few key steps. First, adjust the price feed addresses and handle the library code correctly and make sure you're using the correct version of the Solidity compiler. Then you are ready to connect the MetaMask wallet to remix zkSync module and deploy the contract. Finally, you can verify that everything is working as expected by calling the contract functions in the [zkSync block explorer](https://sepolia.explorer.zksync.io/).
+In the next section, we will move from Remix to a code editor to experiment with more advanced Solidity features. We will explore enums, events, try-catch, function selectors, abi.encode, hashing, Yul, and assembly.
+
+### 🧑‍💻 Test yourself
+
+1. 🏆 Attempt to answer all the theoretical questions from lessons 13 through 25, and then go back again to complete all the coding tasks.

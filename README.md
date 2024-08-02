@@ -1,45 +1,38 @@
-# Immutability and constants
+# Creating custom errors
 
 ## Introduction
 
-In this lesson, we'll explore tools to optimize **gas usage** for variables that are set only _once_.
+In the previous lesson, we learned how to make our contracts more gas efficient. In this lesson, we will further enhance their efficiency.
 
-### Optimizing Variables
+### Require
 
-The variables `owner` and `minimumUSD` are set one time and they never change their value: `owner` is assigned during contract creation, and `minimumUSD` is initialized at the beginning of the contract.
+One way to improve gas efficiency is by optimizing our `require` statements. Currently, the `require` statement forces us to store the string 'sender is not an owner'. Each character in this string is stored individually, making the logic to manage it complex and expensive.
 
-### Evaluating the FundMe Contract
+### Custom Errors
 
-We can evaluate the gas used to create the contract by deploying it and observing the transaction in the terminal. In the original contract configuration, we spent almost 859,000 gas.
+Introduced in **Solidity 0.8.4**, custom errors can be used in `revert` statements. These errors should be declared at the top of the code and used in `if` statements. The cheaper error code is then called in place of the previous error message string, reducing gas costs.
 
-### Constant
+We can start by creating a custom error:
 
-To reduce gas usage, we can use the keywords `constant` and `immutable`. These keywords ensure the variable values remain unchanged. For more information, you can refer to the [Solidity documentation](https://solidity.readthedocs.io/).
+```solidity
+error NotOwner();
+```
 
-We can apply these keywords to variables assigned once and never change. For values known at **compile time**, use the `constant` keyword. It prevents the variable from occupying a storage slot, making it cheaper and faster to read.
+Then, we can replace the `require` function with an `if` statement, using the `revert` function with the newly created error:
 
-Using the `constant` keyword can save approximately 19,000 gas, which is close to the cost of sending ETH between two accounts.
+```solidity
+if (msg.sender != i_owner) {
+ revert NotOwner();
+}
+```
 
-> 🗒️ **NOTE**
-> Naming conventions for `constant` are all caps with underscores in place of spaces (e.g., `MINIMUM_USD`).
-
-> 🚧 **WARNING**
-> Converting the current ETH gas cost to USD, we see that when ETH is priced at 3000 USD, defining `MINIMUM_USD` as a constant costs 9 USD, nearly 1 USD more than its public equivalent.
-
-### Immutable
-
-While `constant` variables are for values known at compile time, `immutable` can be used for variables set at deployment time that will not change. The naming convention for `immutable` variables is to add the prefix `i_` to the variable name (e.g., `i_owner`).
-
-Comparing gas usage after making `owner` an `immutable` variable, we observe similar gas savings to the `constant` keyword.
-
-> 💡 **TIP**
-> Don't focus too much on gas optimization at this early stage of learning.
+By implementing custom errors, we reduce gas costs and simplify error handling in our smart contracts.
 
 ### Conclusion
 
-In this lesson, we have explored the use of `constant` and `immutable` keywords in Solidity to optimize gas usage for variables that are set only once. Understanding how and when to use these keywords can significantly reduce gas costs, making your smart contracts more efficient.
+In this lesson, we have learned how to further optimize gas efficiency in Solidity contracts by using custom errors instead of traditional require statements with strings.
 
 ### 🧑‍💻 Test yourself
 
-1. 📕 Why a developer can choose to use `immutable` instead of `constant` for specific variables?
-2. 🧑‍💻 Invent one `constant` variable and one `immutable` variable that can be integrated into the current version of the `fundMe` contract.
+1. 📕 What are the benefits of declaring custom errors instead of using the `require` keyword?
+2. 🧑‍💻 Create a custom error that is triggered when msg.sender is address(0) and then convert it into an equivalent if statement with a `revert` function.

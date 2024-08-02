@@ -7,6 +7,8 @@ pragma solidity ^0.8.19;
 // This import work only in Remix!
 import {PriceConverter} from "./PriceConverter.sol";
 
+error NotOwner();
+
 contract FundMe {
     using PriceConverter for uint256;
 
@@ -56,7 +58,12 @@ contract FundMe {
     }
 
     modifier onlyOwner() {
-        require(msg.sender == i_owner, "Sender is not owner");
+        // require(msg.sender == i_owner, "Sender is not owner");
+        // _;
+
+        if (msg.sender != i_owner) {
+            revert NotOwner();
+        }
         _;
     }
 }

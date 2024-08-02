@@ -1,23 +1,20 @@
-# Triage
+# Formatting a question
 
-## Introduction
+Quite simply, we can take the following necessary steps while crafting our questions:
 
-To get the most out of this course's tools and techniques, we've got some tips and tricks for you. In this lesson, we'll go over some recommended best practices:
+1. **Describe the issue clearly and concisely** - Be clear in the problem you're facing and what steps got you there
+2. **Highlight the specific error you're experiencing** - including exact error messages can provide those helping you with valuable insight into where things went wrong
+3. **Use markdown for code formatting** - this is critical, formatting your code allows your question to be more readable and approachable for those trying to understand the problem
+4. **Share the relevant part of the code causing the issue** - only include what's relevant to your issue. Don't paste a whole contract into your question unless appropriate to do so. You can provide _too much_ information.
 
-### Limit Self-Triage Time
+With a well formatted question, you're going to see a much higher rate of success in receiving help from others as well as AI.
 
-When encountering an error, limit your troubleshooting time to 15-20 minutes. For example, if you are trying to compile `PriceConverter.sol` and keep receiving an error indicating a missing argument, spend a limited amount of time attempting to solve it on your own. If you can't resolve it after 15-20 minutes, copy the error message and use your resources to ask for help.
+> The importance of markdown formatting cannot be stressed enough. If you're unfamiliar with markdown, don't hesitate to ask an AI like ChatGPT for advice, or to format things for you.
 
-### Utilize AI Wisely
+## Wrapping Up
 
-While AI tools like ChatGPT can be very helpful, it's important not to rely on them entirely. It's crucial to learn the material yourself first and recognize when AI makes mistakes, also known as **hallucinations**. For instance, if you ask ChatGPT about [Foundry](https://book.getfoundry.sh/getting-started/installation#using-foundryup), it might provide inaccurate information because it may not be trained on it. Always verify AI responses with additional research.
+Always remember, there are no _`bad questions`_ but there are _`poorly formatted questions`_. Make your questions count and format them appropriately.
 
-### Engage with Forums
+A pillar of becoming a software engineer is being involved in these communities. Jump in and participate, ask questions and meet people. Contribution is the cornerstone of open source communities. Do your best to answer as many questions as you ask, this will reinforce your knowledge.
 
-When you're stuck on an issue you can't solve, you can visit forum platforms like Stack Exchange or [Peeranha](https://peeranha.io/) to ask questions, help others, and learn collaboratively. Ensure your questions are well-formatted using **Markdown** to improve clarity and the chances of getting helpful responses. If you need guidance on how to format questions, use AI to ask examples of well-formatted queries.
-
-### GitHub Issues
-
-If you can't get help elsewhere, you can open an Github Issue in the [GitHub's Issue Tracker](https://github.com/Cyfrin/remix-fund-me-cu/issues). This section allows you to interact with the developer community, report bugs, and suggest enhancements. Remembert to always search within existing issues before posting to avoid duplicates.
-
-GitHub is essential for sharing, writing, and interacting with fellow developers, as well as accessing and contributing to code. We will use it as a **portfolio** for our projects thorughout the courses. This portfolio will become very valuable when applying for jobs, because it easily showcase your coding skills and contributions to open-source projects.
+> You don't have to be an expert to help those on the journey behind you.

@@ -1,20 +1,37 @@
-# Formatting a question
+# Speedrun
 
-Quite simply, we can take the following necessary steps while crafting our questions:
+In this section we're examining a resource that isn't explicitly part of this course but is highly useful in expanding your knowledge about Ethereum and the Ethereum Virtual Machine (EVM). This resource comes courtesy of my good friend Austin Griffin. Let's go over what it can do for you.
 
-1. **Describe the issue clearly and concisely** - Be clear in the problem you're facing and what steps got you there
-2. **Highlight the specific error you're experiencing** - including exact error messages can provide those helping you with valuable insight into where things went wrong
-3. **Use markdown for code formatting** - this is critical, formatting your code allows your question to be more readable and approachable for those trying to understand the problem
-4. **Share the relevant part of the code causing the issue** - only include what's relevant to your issue. Don't paste a whole contract into your question unless appropriate to do so. You can provide _too much_ information.
+## Introduction to Speedrun Ethereum w/ Austin Griffin
 
-With a well formatted question, you're going to see a much higher rate of success in receiving help from others as well as AI.
+Austin Griffin, renowned for his conspicuous bow tie, is eager to help you kickstart your journey of creating on Ethereum through **[speedrunethereum.com](https://speedrunethereum.com/)**. He's developed this resource to clarify the ‘HOW’ and ‘WHY’ behind Ethereum building.
 
-> The importance of markdown formatting cannot be stressed enough. If you're unfamiliar with markdown, don't hesitate to ask an AI like ChatGPT for advice, or to format things for you.
+Through Speedrun Ethereum, you'll delve into a plethora of projects, including:
 
-## Wrapping Up
+- **Creating a simple Non-Fungible Token (NFT)**
+- **Constructing a decentralized staking app**
+- **Developing a token vendor**
+- **Building a Dice Game** - learning about randomness on chain
+- **Creating a Decentralized Exchange (Dex)**
+- **Contructing and using a MultiSig Wallet**
+- **SVG NFTs and on chain Data**
 
-Always remember, there are no _`bad questions`_ but there are _`poorly formatted questions`_. Make your questions count and format them appropriately.
+...and much more
 
-A pillar of becoming a software engineer is being involved in these communities. Jump in and participate, ask questions and meet people. Contribution is the cornerstone of open source communities. Do your best to answer as many questions as you ask, this will reinforce your knowledge.
+To take advantage of these learning opportunities, visit [Speedrunethereum.com](https://speedrunethereum.com/) and get started!
 
-> You don't have to be an expert to help those on the journey behind you.
+### Intro to Scaffold-ETH2
+
+Scaffold-eth-2 is a great resource for those learning Solidity and trying to visualize what their code is doing.
+
+It provides a clean front-end UI that will update dynamically with your smart contract changes, allowing you to interact with it and monitor adjustments you've made.
+
+### Final Remarks
+
+Leverage the knowledge and resources provided by speedrun ethereum and Scaffold ETH to equip you in building innovative solutions on Ethereum. With determined effort and continuous learning, you're sure to make significant strides in the blockchain ecosystem.
+
+Happy Bow-Tie Friday, Austin.
+
+### Congratulations!
+
+You did it. That's all for this section - you should be incredibly proud. Take a break and rest up, cause you're ready to move on to **[Foundry Fundamentals](https://updraft.cyfrin.io/courses/foundry)**!

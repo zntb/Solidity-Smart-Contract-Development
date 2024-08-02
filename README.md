@@ -1,42 +1,45 @@
-# Test the smart contract without a testnet
+# Immutability and constants
 
 ## Introduction
 
-In this lesson, we'll delve into _end-to-end testing_ of a Solidity contract's deployment and execution.
+In this lesson, we'll explore tools to optimize **gas usage** for variables that are set only _once_.
 
-### Deployment Transaction
+### Optimizing Variables
 
-First, we need to _compile_ the contract to ensure the code is correct. On Remix, set the **injected provider** to MetaMask and confirm it is properly synced to the testnet. Ensure you have some Sepolia Ether (ETH) in your wallet if you plan to deploy the contract on Sepolia.
+The variables `owner` and `minimumUSD` are set one time and they never change their value: `owner` is assigned during contract creation, and `minimumUSD` is initialized at the beginning of the contract.
 
-We'll deploy the `FundMe` contract by clicking deploy and then confirming the transaction in MetaMask, which may take some time.
+### Evaluating the FundMe Contract
 
-### Contract Interaction
+We can evaluate the gas used to create the contract by deploying it and observing the transaction in the terminal. In the original contract configuration, we spent almost 859,000 gas.
 
-After successfully deploying the `FundMe` contract, you'll see several buttons to interact with it:
+### Constant
 
-- **Red button**: Payable functions (e.g., `fund`)
-- **Orange button**: Non-payable functions (e.g., `withdraw`)
-- **Blue buttons**: `view` and `pure` functions
+To reduce gas usage, we can use the keywords `constant` and `immutable`. These keywords ensure the variable values remain unchanged. For more information, you can refer to the [Solidity documentation](https://solidity.readthedocs.io/).
 
-The `fund` function allows us to send ETH to the contract (minimum 5 USD). The `owner` of the contract is our MetaMask account, as the **constructor** sets the deployer as the owner.
+We can apply these keywords to variables assigned once and never change. For values known at **compile time**, use the `constant` keyword. It prevents the variable from occupying a storage slot, making it cheaper and faster to read.
+
+Using the `constant` keyword can save approximately 19,000 gas, which is close to the cost of sending ETH between two accounts.
 
 > 🗒️ **NOTE**
-> If the `fund` function is called without any value or with less than 5 USD, you will encounter a gas estimation error, indicating insufficient ETH, and gas will be wasted.
+> Naming conventions for `constant` are all caps with underscores in place of spaces (e.g., `MINIMUM_USD`).
 
-### Successful Transaction
+> 🚧 **WARNING**
+> Converting the current ETH gas cost to USD, we see that when ETH is priced at 3000 USD, defining `MINIMUM_USD` as a constant costs 9 USD, nearly 1 USD more than its public equivalent.
 
-If you set the amount to `0.1 ETH` and confirm it in MetaMask, you can then track the successful transaction on Etherscan. In the Etherscan transaction log, you will see that the `fundMe` balance has increased by `0.1 ETH`. The `funders` array will register your address, and the mapping `addressToAmountFunded` will record the amount of ETH sent.
+### Immutable
 
-### Withdraw Function and Errors
+While `constant` variables are for values known at compile time, `immutable` can be used for variables set at deployment time that will not change. The naming convention for `immutable` variables is to add the prefix `i_` to the variable name (e.g., `i_owner`).
 
-After funding the contract, we can initiate the `withdraw` function. This function can only be called by the owner; if a non-owner account attempts to withdraw, a gas estimation error will be thrown, and the function will revert.
+Comparing gas usage after making `owner` an `immutable` variable, we observe similar gas savings to the `constant` keyword.
 
-Upon successful withdrawal, the `fundMe` balance, the `addressToAmountFunded` mapping, and the `funders` array will all reset to zero.
+> 💡 **TIP**
+> Don't focus too much on gas optimization at this early stage of learning.
 
 ### Conclusion
 
-In this lesson, we've explored the end-to-end process of deploying and interacting with a Solidity contract using Remix and MetaMask. We covered the deployment transaction, contract interaction, and how to handle successful transactions and potential errors.
+In this lesson, we have explored the use of `constant` and `immutable` keywords in Solidity to optimize gas usage for variables that are set only once. Understanding how and when to use these keywords can significantly reduce gas costs, making your smart contracts more efficient.
 
 ### 🧑‍💻 Test yourself
 
-1. 🧑‍💻 Interact with the `FundMe` contract on Remix and explore all possible outcomes that its functions can lead to.
+1. 📕 Why a developer can choose to use `immutable` instead of `constant` for specific variables?
+2. 🧑‍💻 Invent one `constant` variable and one `immutable` variable that can be integrated into the current version of the `fundMe` contract.
